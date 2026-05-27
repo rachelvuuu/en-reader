@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EN Reader — Luyện Phát Âm</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F7F5F0;
+  --surface: #FFFFFF;
+  --border: #E4E0D8;
+  --text: #1A1916;
+  --muted: #8A8780;
+  --accent: #2D5FA6;
+  --accent-light: #EAF0FA;
+  --accent-muted: #7FA3D4;
+  --highlight: #FDE68A;
+  --done: #C5C3BC;
+  --green: #16A34A;
+  --green-light: #DCFCE7;
+  --radius: 12px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+.app { max-width: 740px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+.top-bar { display: flex; align-items: baseline; gap: 12px; margin-bottom: 2rem; }
+.logo { font-family: 'DM Serif Display', serif; font-size: 22px; letter-spacing: -0.3px; }
+.logo span { color: var(--accent); }
+.tagline { font-size: 13px; color: var(--muted); }
+
+/* View toggle */
+.view-tabs { display: flex; gap: 0; margin-bottom: 1.5rem; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; width: fit-content; }
+.view-tab { font-size: 13px; font-family: 'DM Sans', sans-serif; padding: 7px 18px; border: none; background: transparent; color: var(--muted); cursor: pointer; transition: all .15s; }
+.view-tab.active { background: var(--accent); color: #fff; }
+
+/* Input view */
+.input-view { display: none; }
+.input-view.show { display: block; }
+.input-label { font-size: 13px; font-weight: 500; color: var(--muted); margin-bottom: 6px; }
+textarea {
+  width: 100%; min-height: 200px; padding: 1rem; border: 1px solid var(--border);
+  border-radius: var(--radius); font-family: 'DM Sans', sans-serif; font-size: 14.5px;
+  line-height: 1.75; background: var(--surface); color: var(--text); resize: vertical;
+  transition: border-color .15s;
+}
+textarea:focus { outline: none; border-color: var(--accent-muted); }
+textarea::placeholder { color: var(--done); }
+.input-actions { display: flex; gap: 8px; margin-top: .75rem; }
+
+/* Reader view */
+.reader-view { display: none; }
+.reader-view.show { display: block; }
+
+.prog-row { display: flex; align-items: center; gap: 10px; margin-bottom: .75rem; }
+.prog-bar { flex: 1; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.prog-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width .4s ease; }
+.prog-label { font-size: 12px; color: var(--muted); min-width: 50px; text-align: right; }
+
+.content-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1rem;
+  min-height: 160px; line-height: 2; font-size: 15.5px;
+}
+.sentence { cursor: pointer; border-radius: 4px; padding: 1px 3px; transition: background .12s; display: inline; }
+.sentence:hover { background: var(--accent-light); }
+.sentence.active { background: var(--highlight); color: #1A1916; font-weight: 500; }
+.sentence.done { color: var(--done); }
+
+/* Translation box */
+.trans-box {
+  background: var(--green-light); border: 1px solid #BBF7D0;
+  border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1rem;
+  font-size: 14.5px; line-height: 1.75; color: #166534;
+  display: none;
+}
+.trans-box.show { display: block; }
+.trans-label { font-size: 11px; font-weight: 500; color: var(--green); margin-bottom: 4px; letter-spacing: .5px; text-transform: uppercase; }
+.trans-loading { color: #86EFAC; font-style: italic; }
+
+.status-row { display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; font-size: 13px; color: var(--muted); min-height: 20px; }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--done); flex-shrink: 0; transition: background .2s; }
+.dot.playing { background: #22C55E; animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+.controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;
+  border-radius: 8px; border: 1px solid var(--border); background: var(--surface);
+  color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13.5px;
+  cursor: pointer; transition: all .15s; white-space: nowrap;
+}
+.btn:hover { border-color: var(--accent-muted); background: var(--accent-light); }
+.btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); padding: 8px 22px; font-weight: 500; }
+.btn.primary:hover { opacity: .88; }
+.btn.green { background: var(--green); color: #fff; border-color: var(--green); }
+.btn.green:hover { opacity: .88; }
+.btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+.settings {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  padding: .9rem 1.25rem; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); margin-bottom: 1rem;
+}
+.setting-group { display: flex; align-items: center; gap: 8px; }
+.setting-label { font-size: 12px; color: var(--muted); white-space: nowrap; }
+input[type=range] { width: 90px; accent-color: var(--accent); }
+.setting-val { font-size: 12px; font-weight: 500; color: var(--text); min-width: 32px; }
+select { font-size: 12px; font-family: 'DM Sans', sans-serif; padding: 4px 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--text); max-width: 180px; }
+
+.tip { font-size: 12px; color: var(--muted); background: var(--accent-light); border-left: 3px solid var(--accent-muted); padding: .6rem .9rem; border-radius: 0 6px 6px 0; line-height: 1.7; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="top-bar">
+    <div class="logo">EN<span>Reader</span></div>
+    <div class="tagline">Paste text · Nghe · Dịch · Nhại theo</div>
+  </div>
+
+  <div class="view-tabs">
+    <button class="view-tab active" onclick="switchView('input')">✏️ Nhập text</button>
+    <button class="view-tab" onclick="switchView('reader')" id="tab-reader">▶️ Đọc</button>
+  </div>
+
+  <!-- INPUT VIEW -->
+  <div class="input-view show" id="input-view">
+    <div class="input-label">Paste đoạn tiếng Anh vào đây</div>
+    <textarea id="txt-input" placeholder="Ví dụ: The Waiting Room feature helps distribute incoming traffic to your website by controlling how many users can access a specific URI path at the same time..."></textarea>
+    <div class="input-actions">
+      <button class="btn primary" onclick="startReading()">
+        <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Bắt đầu đọc
+      </button>
+      <button class="btn" onclick="clearInput()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+        Xóa
+      </button>
+    </div>
+  </div>
+
+  <!-- READER VIEW -->
+  <div class="reader-view" id="reader-view">
+
+    <div class="prog-row">
+      <div class="prog-bar"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+      <div class="prog-label" id="counter">0 / 0</div>
+    </div>
+
+    <div class="content-card" id="content"></div>
+
+    <div class="trans-box" id="trans-box">
+      <div class="trans-label">🇻🇳 Bản dịch</div>
+      <div id="trans-text"></div>
+    </div>
+
+    <div class="status-row">
+      <div class="dot" id="dot"></div>
+      <span id="status-txt">Chọn câu bất kỳ hoặc bấm Play</span>
+    </div>
+
+    <div class="controls">
+      <button class="btn" onclick="prevSentence()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        Trước
+      </button>
+      <button class="btn primary" id="btn-play" onclick="togglePlay()">
+        <svg id="play-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        <span id="play-label">Play</span>
+      </button>
+      <button class="btn" onclick="nextSentence()">
+        Tiếp
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <button class="btn" onclick="repeatCurrent()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.45"/></svg>
+        Lặp lại
+      </button>
+      <button class="btn green" onclick="translateCurrent()" id="btn-trans">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h12M9 3v2m-4 4h8m-4 0v10m4-7h5l-5 5"/></svg>
+        Dịch câu này
+      </button>
+    </div>
+
+    <div class="settings">
+      <div class="setting-group">
+        <span class="setting-label">Tốc độ</span>
+        <input type="range" min="0.5" max="1.5" step="0.1" value="0.85" id="rate-slider"
+          oninput="document.getElementById('rate-val').textContent=parseFloat(this.value).toFixed(1)+'x'">
+        <span class="setting-val" id="rate-val">0.9x</span>
+      </div>
+      <div class="setting-group">
+        <span class="setting-label">Pitch</span>
+        <input type="range" min="0.8" max="1.3" step="0.05" value="1.0" id="pitch-slider" style="width:70px">
+      </div>
+      <div class="setting-group">
+        <span class="setting-label">Giọng</span>
+        <select id="voice-sel"><option>Loading...</option></select>
+      </div>
+    </div>
+
+    <div class="tip">
+      💡 <strong>Cách luyện:</strong> Nghe → bấm <strong>Dịch câu này</strong> để hiểu nghĩa → bấm <strong>Lặp lại</strong> → tự đọc theo. Chỉnh tốc độ về 0.8x nếu cần nghe rõ hơn.
+    </div>
+
+  </div>
+</div>
+
+<script>
+let sentences = [], curIdx = -1, playing = false, voices = [], utter = null;
+
+function splitSentences(text) {
+  const cleaned = text.replace(/\n+/g, ' ').replace(/\s+/g, ' ').trim();
+  return cleaned.match(/[^.!?]+[.!?]+/g)?.map(s => s.trim()).filter(s => s.length > 4) || [cleaned];
+}
+
+function switchView(v) {
+  document.getElementById('input-view').classList.toggle('show', v === 'input');
+  document.getElementById('reader-view').classList.toggle('show', v === 'reader');
+  document.querySelectorAll('.view-tab').forEach((t, i) => t.classList.toggle('active', (i === 0) === (v === 'input')));
+  if (v === 'reader') hideTranslation();
+}
+
+function startReading() {
+  const txt = document.getElementById('txt-input').value.trim();
+  if (!txt) { alert('Bạn chưa nhập text!'); return; }
+  sentences = splitSentences(txt);
+  curIdx = -1; playing = false;
+  updatePlayBtn(); renderContent(); updateProgress();
+  hideTranslation();
+  setStatus('Chọn câu bất kỳ hoặc bấm Play', false);
+  switchView('reader');
+}
+
+function clearInput() {
+  document.getElementById('txt-input').value = '';
+}
+
+function renderContent() {
+  document.getElementById('content').innerHTML = sentences.map((s, i) =>
+    `<span class="sentence${i < curIdx ? ' done' : i === curIdx ? ' active' : ''}" onclick="jumpTo(${i})">${s}</span> `
+  ).join('');
+}
+
+function jumpTo(i) {
+  stopSpeech(); playing = true;
+  curIdx = i; renderContent(); updateProgress(); updatePlayBtn();
+  hideTranslation();
+  speakCurrent();
+}
+
+function updateProgress() {
+  const pct = sentences.length ? Math.round((Math.max(curIdx, 0) + 1) / sentences.length * 100) : 0;
+  document.getElementById('prog').style.width = (curIdx < 0 ? 0 : pct) + '%';
+  document.getElementById('counter').textContent = curIdx >= 0 ? `${curIdx + 1} / ${sentences.length}` : `0 / ${sentences.length}`;
+}
+
+function speakCurrent() {
+  if (curIdx < 0 || curIdx >= sentences.length) return;
+  stopSpeech();
+  utter = new SpeechSynthesisUtterance(sentences[curIdx]);
+  utter.rate = parseFloat(document.getElementById('rate-slider').value);
+  utter.pitch = parseFloat(document.getElementById('pitch-slider').value);
+  const sel = document.getElementById('voice-sel');
+  if (sel.value && voices.length) {
+    const v = voices.find(v => v.name === sel.value);
+    if (v) utter.voice = v;
+  }
+  utter.onend = () => {
+    if (!playing) return;
+    if (curIdx < sentences.length - 1) {
+      curIdx++; renderContent(); updateProgress(); scrollActive();
+      setTimeout(speakCurrent, 420);
+    } else {
+      playing = false; updatePlayBtn();
+      setStatus('Đã đọc xong ✓', false);
+    }
+  };
+  utter.onerror = () => {};
+  speechSynthesis.speak(utter);
+  scrollActive();
+  setStatus(`Đang đọc câu ${curIdx + 1} / ${sentences.length}`, true);
+}
+
+function scrollActive() {
+  const el = document.querySelector('.sentence.active');
+  if (el) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+function stopSpeech() { speechSynthesis.cancel(); utter = null; }
+
+function togglePlay() {
+  if (playing) {
+    playing = false; stopSpeech(); updatePlayBtn();
+    setStatus('Đã tạm dừng', false);
+  } else {
+    playing = true;
+    if (curIdx < 0) curIdx = 0;
+    renderContent(); updateProgress(); updatePlayBtn();
+    speakCurrent();
+  }
+}
+
+function nextSentence() {
+  stopSpeech(); playing = false; updatePlayBtn();
+  hideTranslation();
+  if (curIdx < sentences.length - 1) { curIdx++; renderContent(); updateProgress(); }
+  setStatus('Bấm Play để nghe câu này', false);
+}
+
+function prevSentence() {
+  stopSpeech(); playing = false; updatePlayBtn();
+  hideTranslation();
+  if (curIdx > 0) { curIdx--; renderContent(); updateProgress(); }
+  setStatus('Bấm Play để nghe câu này', false);
+}
+
+function repeatCurrent() {
+  if (curIdx < 0) curIdx = 0;
+  stopSpeech(); playing = true; updatePlayBtn();
+  speakCurrent();
+}
+
+function updatePlayBtn() {
+  const isPlay = !playing;
+  document.getElementById('play-icon').innerHTML = isPlay
+    ? '<polygon points="5 3 19 12 5 21 5 3"/>'
+    : '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+  document.getElementById('play-label').textContent = isPlay ? 'Play' : 'Dừng';
+  document.getElementById('dot').classList.toggle('playing', playing);
+}
+
+function setStatus(msg, isPlaying) {
+  document.getElementById('status-txt').textContent = msg;
+  document.getElementById('dot').classList.toggle('playing', isPlaying);
+}
+
+function hideTranslation() {
+  document.getElementById('trans-box').classList.remove('show');
+  document.getElementById('trans-text').textContent = '';
+}
+
+async function translateCurrent() {
+  if (curIdx < 0 || curIdx >= sentences.length) {
+    setStatus('Chọn hoặc phát một câu trước', false); return;
+  }
+  const sentence = sentences[curIdx];
+  const box = document.getElementById('trans-box');
+  const txt = document.getElementById('trans-text');
+  box.classList.add('show');
+  txt.innerHTML = '<span class="trans-loading">Đang dịch...</span>';
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{
+          role: 'user',
+          content: `Dịch câu tiếng Anh sau sang tiếng Việt tự nhiên, ngắn gọn. Chỉ trả về bản dịch, không giải thích gì thêm.\n\n"${sentence}"`
+        }]
+      })
+    });
+    const data = await res.json();
+    const translation = data?.content?.[0]?.text?.trim() || 'Không dịch được, thử lại nhé.';
+    txt.textContent = translation;
+  } catch (e) {
+    txt.textContent = 'Lỗi kết nối. Kiểm tra mạng và thử lại.';
+  }
+}
+
+function loadVoices() {
+  voices = speechSynthesis.getVoices().filter(v => v.lang.startsWith('en'));
+  const sel = document.getElementById('voice-sel');
+  if (voices.length) {
+    sel.innerHTML = voices.map(v => `<option value="${v.name}">${v.name.replace(/Microsoft |Google /, '')}</option>`).join('');
+    const preferred = voices.find(v =>
+      v.name.includes('Samantha') || v.name.includes('Karen') ||
+      v.name.includes('Daniel') || v.name.includes('Zira') || v.name.includes('Moira')
+    );
+    if (preferred) sel.value = preferred.name;
+  } else {
+    sel.innerHTML = '<option value="">Default voice</option>';
+  }
+}
+
+speechSynthesis.onvoiceschanged = loadVoices;
+loadVoices();
+</script>
+</body>
+</html>

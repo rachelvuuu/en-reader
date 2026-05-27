@@ -353,20 +353,10 @@ async function translateCurrent() {
   txt.innerHTML = '<span class="trans-loading">Đang dịch...</span>';
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{
-          role: 'user',
-          content: `Dịch câu tiếng Anh sau sang tiếng Việt tự nhiên, ngắn gọn. Chỉ trả về bản dịch, không giải thích gì thêm.\n\n"${sentence}"`
-        }]
-      })
-    });
+    const url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=vi&dt=t&q=' + encodeURIComponent(sentence);
+    const res = await fetch(url);
     const data = await res.json();
-    const translation = data?.content?.[0]?.text?.trim() || 'Không dịch được, thử lại nhé.';
+    const translation = data?.[0]?.map(x => x?.[0]).filter(Boolean).join('') || 'Không dịch được, thử lại nhé.';
     txt.textContent = translation;
   } catch (e) {
     txt.textContent = 'Lỗi kết nối. Kiểm tra mạng và thử lại.';

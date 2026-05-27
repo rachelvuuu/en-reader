@@ -1,844 +1,574 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light" data-lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EN Reader — Luyện Phát Âm</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>EN Reader</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23FF6B4A'/><text y='.9em' font-size='65' x='15'>🎙️</text></svg>">
 <style>
-/* ── THEME VARIABLES ── */
-[data-theme="light"] {
-  --bg: #FFF5F3; --bg2: #FFF0ED;
-  --surface: #FFFFFF; --surface2: #FFF8F6;
-  --border: rgba(255,120,90,0.12); --border2: rgba(255,120,90,0.22);
-  --text: #2D1A16; --muted: #B8917F; --muted2: #8C5E50;
-  --accent: #FF6B4A; --accent2: #FF8A6A;
-  --accent-light: #FFF0EC;
-  --accent-grad: linear-gradient(135deg,#FF6B4A,#FF9A6C);
-  --highlight-bg: #FFF4F2; --highlight-border: #FF6B4A;
-  --done-text: #C9A090;
-  --green: #00C896; --green-bg: #F0FDF9; --green-border: #A7F3D9;
-  --card-bg: rgba(255,255,255,.85);
-  --sidebar-bg: rgba(255,255,255,.75);
-  --blob1: #FFB5A7; --blob2: #FFCBA4;
-  --shadow: 0 2px 8px rgba(255,100,70,.08),0 1px 3px rgba(0,0,0,.04);
-  --shadow-md: 0 8px 24px rgba(255,100,70,.12),0 2px 8px rgba(0,0,0,.06);
-  --overlay-bg: rgba(255,245,243,.92);
+:root{
+  --bg:#FFF5F3;--surface:#FFFFFF;--surface2:#FFF8F6;
+  --border:rgba(255,120,90,0.12);--border2:rgba(255,120,90,0.22);
+  --text:#2D1A16;--muted:#C4907E;--muted2:#8C5E50;
+  --accent:#FF6B4A;--accent2:#FF8A6A;--accent-light:#FFF0EC;
+  --accent-grad:linear-gradient(135deg,#FF6B4A,#FF9A6C);
+  --highlight:#FF6B4A;--done-text:#D4B8B0;
+  --green:#00C896;--green-bg:#F0FDF9;--green-border:#A7F3D9;
+  --shadow:0 2px 12px rgba(255,100,70,.08),0 1px 4px rgba(0,0,0,.04);
+  --shadow-lg:0 8px 32px rgba(255,100,70,.13),0 2px 8px rgba(0,0,0,.06);
+  --r:20px;--r-sm:12px;
 }
-[data-theme="dark"] {
-  --bg: #1C1110; --bg2: #221413;
-  --surface: #2E1F1C; --surface2: #3A2824;
-  --border: rgba(255,150,110,0.2); --border2: rgba(255,150,110,0.32);
-  --text: #FFF0EB; --muted: #D4A090; --muted2: #ECC8B8;
-  --accent: #FF8060; --accent2: #FFA080;
-  --accent-light: rgba(255,120,80,.22);
-  --accent-grad: linear-gradient(135deg,#FF8060,#FFB080);
-  --highlight-bg: rgba(255,120,74,.22); --highlight-border: #FF8060;
-  --done-text: #6A4038;
-  --green: #00E4A8; --green-bg: #0C2820; --green-border: #1E6A50;
-  --card-bg: rgba(46,31,28,.97);
-  --sidebar-bg: rgba(30,18,16,.95);
-  --blob1: #5A2018; --blob2: #4A2A14;
-  --shadow: 0 2px 8px rgba(0,0,0,.45),0 1px 3px rgba(0,0,0,.35);
-  --shadow-md: 0 8px 24px rgba(0,0,0,.55),0 2px 8px rgba(0,0,0,.4);
-  --overlay-bg: rgba(20,12,10,.97);
+[data-theme="dark"]{
+  --bg:#1C1110;--surface:#2A1C19;--surface2:#352320;
+  --border:rgba(255,140,100,0.15);--border2:rgba(255,140,100,0.25);
+  --text:#FFF0EB;--muted:#C4907E;--muted2:#E8B8A8;
+  --accent:#FF8060;--accent2:#FFA080;--accent-light:rgba(255,120,80,.18);
+  --accent-grad:linear-gradient(135deg,#FF8060,#FFB080);
+  --highlight:#FF8060;--done-text:#5A3A32;
+  --green:#00E4A8;--green-bg:#0A1F18;--green-border:#1A5040;
+  --shadow:0 2px 12px rgba(0,0,0,.4),0 1px 4px rgba(0,0,0,.3);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.5),0 2px 8px rgba(0,0,0,.4);
 }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
 
-/* ── RESET ── */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-  background: var(--bg); color: var(--text);
-  min-height: 100vh; -webkit-font-smoothing: antialiased;
-  overflow-x: hidden; transition: background .3s, color .3s;
-}
+/* TOP PROGRESS */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:50;height:3px;background:var(--border)}
+.topbar-fill{height:100%;background:var(--accent-grad);transition:width 1s linear;width:0%}
 
-/* ── WELCOME OVERLAY ── */
-.welcome-overlay {
-  position: fixed; inset: 0; z-index: 100;
-  background: var(--overlay-bg);
-  backdrop-filter: blur(32px);
-  display: flex; align-items: center; justify-content: center;
-  animation: overlayIn .7s cubic-bezier(.22,1,.36,1);
-  overflow: hidden;
-}
-.welcome-overlay.hide { animation: overlayOut .6s cubic-bezier(.22,1,.36,1) forwards; }
-@keyframes overlayIn { from{opacity:0} to{opacity:1} }
-@keyframes overlayOut { from{opacity:1;transform:scale(1)} to{opacity:0;transform:scale(1.04);pointer-events:none} }
+/* WELCOME */
+.welcome{position:fixed;inset:0;z-index:100;background:rgba(255,245,243,.97);backdrop-filter:blur(24px);display:flex;align-items:center;justify-content:center;animation:fadeIn .5s ease}
+[data-theme="dark"] .welcome{background:rgba(20,12,10,.97)}
+.welcome.hide{animation:fadeOut .4s ease forwards;pointer-events:none}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeOut{from{opacity:1}to{opacity:0}}
+.w-orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(70px)}
+.w-orb-1{width:480px;height:480px;background:radial-gradient(circle,rgba(255,120,74,.45),transparent 65%);top:-140px;right:-90px;animation:orbDrift 7s ease-in-out infinite}
+.w-orb-2{width:380px;height:380px;background:radial-gradient(circle,rgba(255,180,130,.35),transparent 65%);bottom:-90px;left:-70px;animation:orbDrift 9s ease-in-out infinite reverse}
+@keyframes orbDrift{0%,100%{transform:translate(0,0)}50%{transform:translate(22px,-22px)}}
+.w-grid{position:absolute;inset:0;opacity:.035;background-image:linear-gradient(var(--accent) 1px,transparent 1px),linear-gradient(90deg,var(--accent) 1px,transparent 1px);background-size:56px 56px;pointer-events:none}
+.w-box{position:relative;z-index:1;text-align:center;max-width:420px;padding:2.5rem 2rem}
+.w-greeting{font-size:46px;font-weight:900;letter-spacing:-2px;line-height:1;margin-bottom:.6rem;background:var(--accent-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:wIn .9s cubic-bezier(.22,1,.36,1) .1s both}
+.w-emoji{font-size:38px;display:inline-block;margin-left:6px;animation:wave 2s ease-in-out 1.2s infinite;vertical-align:middle}
+@keyframes wave{0%,60%,100%{transform:rotate(0)}15%{transform:rotate(22deg) scale(1.1)}35%{transform:rotate(-10deg)}50%{transform:rotate(16deg)}}
+.w-sub{font-size:15px;color:var(--muted2);margin-bottom:.3rem;font-weight:600;animation:wIn .9s cubic-bezier(.22,1,.36,1) .25s both}
+.w-sub2{font-size:13px;color:var(--muted);margin-bottom:1.75rem;animation:wIn .9s cubic-bezier(.22,1,.36,1) .4s both}
+@keyframes wIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.w-stats{display:flex;justify-content:center;gap:2rem;margin-bottom:2rem;animation:wIn .9s cubic-bezier(.22,1,.36,1) .5s both}
+.w-stat-num{font-size:20px;font-weight:800;color:var(--accent);font-family:'Space Mono',monospace;display:block}
+.w-stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;font-weight:700}
+.w-div{width:1px;background:var(--border2)}
+.w-btn{display:inline-flex;align-items:center;gap:10px;padding:13px 36px;border-radius:50px;border:none;background:var(--accent-grad);color:#fff;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 8px 24px rgba(255,107,74,.4),inset 0 1px 0 rgba(255,255,255,.2);transition:all .25s cubic-bezier(.22,1,.36,1);animation:wIn 1s cubic-bezier(.22,1,.36,1) .65s both;position:relative;overflow:hidden}
+.w-btn::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transition:left .5s}
+.w-btn:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 14px 32px rgba(255,107,74,.55)}
+.w-btn:hover::after{left:100%}
+.w-btn svg{animation:arrAnim 1.8s ease-in-out infinite}
+@keyframes arrAnim{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
+.w-date{font-size:11px;color:var(--muted);margin-top:1rem;font-family:'Space Mono',monospace;opacity:.6;animation:wIn .9s cubic-bezier(.22,1,.36,1) .8s both}
 
-/* floating orbs behind welcome */
-.welcome-orb {
-  position: absolute; border-radius: 50%; pointer-events: none; filter: blur(70px);
-}
-.welcome-orb-1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(255,120,74,.6), transparent 65%); top: -200px; right: -150px; animation: orbDrift 7s ease-in-out infinite; }
-.welcome-orb-2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(255,180,130,.45), transparent 65%); bottom: -150px; left: -120px; animation: orbDrift 9s ease-in-out infinite reverse; }
-.welcome-orb-3 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(255,80,50,.35), transparent 65%); top: 35%; left: 20%; animation: orbPulse 4s ease-in-out infinite; }
-.welcome-orb-4 { width: 250px; height: 250px; background: radial-gradient(circle, rgba(255,200,100,.3), transparent 65%); bottom: 20%; right: 15%; animation: orbPulse 5s ease-in-out infinite 1s; }
-@keyframes orbDrift { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(30px,-30px) scale(1.08)} }
-@keyframes orbPulse { 0%,100%{opacity:.4;transform:scale(1)} 50%{opacity:.7;transform:scale(1.2)} }
+/* PAGE WRAPPER */
+.page{max-width:720px;margin:0 auto;padding:2.5rem 1.5rem 4rem}
 
-/* grid lines overlay */
-.welcome-grid {
-  position: absolute; inset: 0; pointer-events: none; opacity: .04;
-  background-image: linear-gradient(var(--accent) 1px, transparent 1px), linear-gradient(90deg, var(--accent) 1px, transparent 1px);
-  background-size: 60px 60px;
-}
+/* HEADER */
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:38px;height:38px;background:var(--accent-grad);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 3px 10px rgba(255,107,74,.35);animation:logoPulse 3s ease-in-out infinite;flex-shrink:0}
+@keyframes logoPulse{0%,100%{box-shadow:0 3px 10px rgba(255,107,74,.35)}50%{box-shadow:0 5px 18px rgba(255,107,74,.55)}}
+.logo-text{font-size:15px;font-weight:800;color:var(--text);letter-spacing:-.3px}
+.logo-sub{font-size:10px;color:var(--muted);margin-top:1px;font-weight:600}
+.header-controls{display:flex;align-items:center;gap:8px}
+.lang-toggle{display:flex;gap:2px;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:2px}
+.lang-btn{font-size:11px;font-weight:800;padding:4px 10px;border-radius:8px;border:none;background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;font-family:'Nunito',sans-serif}
+.lang-btn.active{background:var(--accent-grad);color:#fff}
+.icon-btn{width:32px;height:32px;border-radius:10px;border:1px solid var(--border2);background:var(--surface2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .2s}
+.icon-btn:hover{transform:scale(1.1)}
 
-/* particle dots */
-.welcome-particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
-.p { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: var(--accent); animation: particleFloat linear infinite; opacity: 0; }
-.p:nth-child(1){left:10%;animation-duration:8s;animation-delay:0s;width:4px;height:4px}
-.p:nth-child(2){left:25%;animation-duration:10s;animation-delay:1s}
-.p:nth-child(3){left:40%;animation-duration:7s;animation-delay:2s;width:2px;height:2px;background:#FFB080}
-.p:nth-child(4){left:60%;animation-duration:12s;animation-delay:.5s;width:4px;height:4px}
-.p:nth-child(5){left:75%;animation-duration:9s;animation-delay:1.5s;background:#FFB080}
-.p:nth-child(6){left:88%;animation-duration:11s;animation-delay:3s;width:2px;height:2px}
-.p:nth-child(7){left:50%;animation-duration:8s;animation-delay:4s}
-.p:nth-child(8){left:15%;animation-duration:13s;animation-delay:2.5s;width:3px;height:3px;background:#FFD0A0}
-@keyframes particleFloat {
-  0%{transform:translateY(100vh) rotate(0deg);opacity:0}
-  10%{opacity:.8}
-  90%{opacity:.4}
-  100%{transform:translateY(-100px) rotate(360deg);opacity:0}
-}
+/* SECTION LABEL */
+.section-label{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:.6rem;display:flex;align-items:center;gap:5px}
 
-.welcome-box {
-  position: relative; z-index: 1;
-  text-align: center; max-width: 500px; padding: 3rem 2.5rem;
-}
+/* TIMER + GROWING ROW */
+.top-row{display:grid;grid-template-columns:1fr 1fr;gap:.875rem;margin-bottom:.875rem}
 
-/* tag pill */
-.welcome-tag {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: rgba(255,107,74,.15); border: 1px solid rgba(255,107,74,.3);
-  color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
-  text-transform: uppercase; padding: 5px 14px; border-radius: 20px;
-  margin-bottom: 1.5rem;
-  animation: tagIn .8s cubic-bezier(.22,1,.36,1) both;
-}
-.welcome-tag-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: dotBounce 1.2s ease-in-out infinite; }
-@keyframes tagIn { from{opacity:0;transform:translateY(-16px) scale(.9)} to{opacity:1;transform:translateY(0) scale(1)} }
+/* TIMER CARD */
+.timer-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:1.1rem 1.25rem;box-shadow:var(--shadow);transition:background .3s,border-color .3s}
+.timer-inner{display:flex;align-items:center;gap:.875rem}
+.timer-left{flex:1;min-width:0}
+.session-opts{display:flex;gap:4px;margin-bottom:.55rem}
+.session-opt{flex:1;padding:5px 2px;border-radius:8px;border:1.5px solid var(--border2);background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-size:11.5px;font-weight:700;cursor:pointer;transition:all .15s;text-align:center}
+.session-opt:hover{border-color:var(--accent);color:var(--accent)}
+.session-opt.active{background:var(--accent-grad);color:#fff;border-color:transparent;box-shadow:0 2px 8px rgba(255,107,74,.3)}
+.timer-display{font-family:'Space Mono',monospace;font-size:30px;font-weight:700;color:var(--accent);letter-spacing:2px;line-height:1;margin-bottom:.3rem;transition:color .3s}
+.timer-display.done{color:var(--green)}
+.timer-prog{height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;border:1px solid var(--border);margin-bottom:.4rem}
+.timer-prog-fill{height:100%;background:var(--accent-grad);border-radius:2px;transition:width 1s linear;width:0%}
+.timer-status{font-size:10.5px;color:var(--muted);font-weight:600;min-height:14px}
+.timer-right{display:flex;flex-direction:column;gap:5px;flex-shrink:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:7px 14px;border-radius:10px;border:1.5px solid var(--border2);background:var(--surface);color:var(--muted2);font-family:'Nunito',sans-serif;font-size:12.5px;font-weight:700;cursor:pointer;transition:all .18s;white-space:nowrap;box-shadow:var(--shadow)}
+.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-lg)}
+.btn:active{transform:scale(.96)}
+.btn svg{width:12px;height:12px;flex-shrink:0}
+.btn-accent{background:var(--accent-grad);color:#fff;border-color:transparent;box-shadow:0 3px 12px rgba(255,107,74,.4);font-size:13px;padding:8px 16px}
+.btn-accent:hover{box-shadow:0 5px 18px rgba(255,107,74,.5);color:#fff}
+.btn-ghost{background:transparent;border-color:var(--border);box-shadow:none;padding:7px 10px}
+.btn-ghost:hover{background:var(--accent-light);border-color:var(--border2);color:var(--accent)}
+.btn-play{background:var(--text);color:var(--bg);border-color:var(--text);padding:9px 20px;font-size:13px;box-shadow:0 3px 10px rgba(0,0,0,.2)}
+.btn-play:hover{box-shadow:0 6px 18px rgba(0,0,0,.28);color:var(--bg)}
+.btn-green{background:var(--green-bg);color:var(--green);border-color:var(--green-border)}
 
-.welcome-greeting {
-  font-size: 52px; font-weight: 700; letter-spacing: -2px; line-height: 1;
-  margin-bottom: .75rem;
-  background: var(--accent-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  animation: greetingIn 1s cubic-bezier(.22,1,.36,1) .15s both;
-}
-@keyframes greetingIn {
-  from{opacity:0;transform:translateY(30px) scale(.95);filter:blur(8px)}
-  to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
-}
+/* GROWING TREE CARD */
+.growing-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:1.1rem 1.25rem;box-shadow:var(--shadow);transition:background .3s,border-color .3s;display:flex;flex-direction:column;align-items:center;text-align:center}
+.growing-emoji-wrap{font-size:52px;line-height:1;margin:.3rem 0 .4rem;animation:treeSway 3s ease-in-out infinite;filter:drop-shadow(0 4px 10px rgba(0,180,100,.2))}
+@keyframes treeSway{0%,100%{transform:rotate(0) scale(1)}25%{transform:rotate(2deg) scale(1.03)}75%{transform:rotate(-2deg) scale(1.03)}}
+.growing-name{font-size:14px;font-weight:800;color:var(--text);letter-spacing:-.3px}
+.growing-sub{font-size:10.5px;color:var(--muted);font-weight:600;margin-bottom:.6rem}
+.growing-bar{width:100%;height:7px;background:var(--surface2);border-radius:4px;overflow:hidden;border:1px solid var(--border);margin-bottom:.3rem}
+.growing-bar-fill{height:100%;background:linear-gradient(90deg,#00C896,#7AF5D4);border-radius:4px;transition:width .5s ease;box-shadow:0 0 6px rgba(0,200,150,.35)}
+.growing-pct{font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;font-weight:700}
+.no-tree{color:var(--muted);font-size:12px;font-weight:600;line-height:1.6;padding:.5rem 0}
+.no-tree-emoji{font-size:32px;display:block;margin-bottom:.4rem;opacity:.4}
 
-.welcome-emoji {
-  font-size: 52px; display: inline-block; margin-left: 8px;
-  animation: waveHand 2s ease-in-out 1.2s infinite;
-  filter: drop-shadow(0 4px 12px rgba(255,107,74,.4));
-  vertical-align: middle;
-}
-@keyframes waveHand {
-  0%,60%,100%{transform:rotate(0deg) scale(1)}
-  15%{transform:rotate(24deg) scale(1.12)}
-  30%{transform:rotate(-10deg) scale(1.06)}
-  45%{transform:rotate(18deg) scale(1.09)}
-}
+/* GARDEN ROW */
+.garden-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:1.1rem 1.25rem;box-shadow:var(--shadow);transition:background .3s,border-color .3s;margin-bottom:.875rem}
+.garden-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem}
+.garden-title{font-size:10px;font-weight:800;color:var(--muted2);text-transform:uppercase;letter-spacing:.8px}
+.garden-stats{display:flex;gap:.5rem}
+.g-stat{font-size:11px;font-weight:700;color:var(--muted);font-family:'Space Mono',monospace}
+.g-stat span{color:var(--accent)}
+.garden-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
+.g-tree{aspect-ratio:1;border-radius:10px;background:var(--surface2);border:1.5px solid var(--border2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;transition:all .18s;font-size:18px;cursor:default}
+.g-tree:hover{transform:scale(1.1);border-color:var(--accent)}
+.g-tree.growing{border-color:var(--green);background:var(--green-bg)}
+.g-tree.active-now{border-color:var(--accent);background:var(--accent-light);animation:activePulse 2s ease-in-out infinite}
+@keyframes activePulse{0%,100%{box-shadow:0 0 0 0 rgba(255,107,74,.2)}50%{box-shadow:0 0 0 4px rgba(255,107,74,.08)}}
+.g-tree.empty{opacity:.2;border-style:dashed;font-size:10px;color:var(--muted)}
+.g-tree-lbl{font-size:7px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.2px}
+.g-tree.new-tree{animation:treePop .6s cubic-bezier(.22,1,.36,1)}
+@keyframes treePop{0%{transform:scale(0) rotate(-15deg);opacity:0}60%{transform:scale(1.3) rotate(4deg)}100%{transform:scale(1) rotate(0);opacity:1}}
 
-.welcome-sub {
-  font-size: 17px; color: var(--muted2); margin-bottom: .4rem; font-weight: 400;
-  animation: lineIn .9s cubic-bezier(.22,1,.36,1) .35s both;
-}
-.welcome-sub2 {
-  font-size: 14px; color: var(--muted); margin-bottom: 2.5rem;
-  animation: lineIn .9s cubic-bezier(.22,1,.36,1) .5s both;
-}
-@keyframes lineIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+/* INPUT CARD */
+.input-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;margin-bottom:.875rem;transition:background .3s,border-color .3s}
+.input-header{padding:.8rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.input-label{font-size:11.5px;font-weight:700;color:var(--muted2);display:flex;align-items:center;gap:5px}
+.input-label svg{width:12px;height:12px;color:var(--accent)}
+.char-count{font-size:11px;font-family:'Space Mono',monospace;color:var(--muted)}
+textarea{width:100%;min-height:130px;padding:.9rem 1.25rem;border:none;outline:none;resize:vertical;font-family:'Nunito',sans-serif;font-size:15px;color:var(--text);background:transparent;line-height:1.85;font-weight:500;transition:color .3s}
+textarea::placeholder{color:var(--done-text);font-style:italic;font-weight:400}
+.input-footer{padding:.7rem 1.25rem;border-top:1px solid var(--border);display:flex;align-items:center;gap:8px;background:var(--surface2);transition:background .3s}
 
-/* stats row */
-.welcome-stats {
-  display: flex; justify-content: center; gap: 2rem; margin-bottom: 2.5rem;
-  animation: lineIn .9s cubic-bezier(.22,1,.36,1) .6s both;
-}
-.welcome-stat { text-align: center; }
-.welcome-stat-num { font-size: 22px; font-weight: 700; color: var(--accent); font-family: 'JetBrains Mono', monospace; display: block; }
-.welcome-stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .8px; font-weight: 600; }
-.welcome-stat-div { width: 1px; background: var(--border2); }
+/* READER */
+.reader-section{display:none;flex-direction:column;gap:.875rem}
+.reader-section.show{display:flex;animation:fadeUp .4s cubic-bezier(.22,1,.36,1)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
-.welcome-btn {
-  display: inline-flex; align-items: center; gap: 10px;
-  padding: 16px 42px; border-radius: 50px; border: none;
-  background: var(--accent-grad); color: #fff;
-  font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 700;
-  cursor: pointer; letter-spacing: -.2px;
-  box-shadow: 0 8px 32px rgba(255,107,74,.5), 0 2px 8px rgba(255,107,74,.2), inset 0 1px 0 rgba(255,255,255,.2);
-  transition: all .25s cubic-bezier(.22,1,.36,1);
-  animation: btnIn 1s cubic-bezier(.22,1,.36,1) .75s both;
-  position: relative; overflow: hidden;
-}
-.welcome-btn::before {
-  content:''; position:absolute; inset:0; border-radius:50px;
-  background: linear-gradient(135deg, rgba(255,255,255,.3), transparent 50%);
-  opacity: 0; transition: opacity .2s;
-}
-.welcome-btn::after {
-  content:''; position:absolute; top:0; left:-100%; width:100%; height:100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,.2), transparent);
-  transition: left .5s ease;
-}
-.welcome-btn:hover::after { left: 100%; }
-.welcome-btn:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 16px 40px rgba(255,107,74,.6), 0 4px 16px rgba(255,107,74,.3); }
-.welcome-btn:hover::before { opacity: 1; }
-.welcome-btn:active { transform: scale(.97); }
-.welcome-btn svg { animation: btnArrow 1.8s ease-in-out infinite; }
-@keyframes btnArrow { 0%,100%{transform:translateX(0)} 50%{transform:translateX(5px)} }
-@keyframes btnIn { from{opacity:0;transform:translateY(20px) scale(.92)} to{opacity:1;transform:translateY(0) scale(1)} }
+.prog-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:.9rem 1.25rem;box-shadow:var(--shadow);transition:background .3s,border-color .3s}
+.prog-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.prog-status{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--text)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:all .3s}
+.dot.playing{background:var(--green);box-shadow:0 0 0 3px rgba(0,200,150,.18);animation:dotPulse 1.2s infinite}
+@keyframes dotPulse{0%,100%{box-shadow:0 0 0 3px rgba(0,200,150,.18)}50%{box-shadow:0 0 0 7px rgba(0,200,150,.06)}}
+.prog-counter{font-size:11px;font-family:'Space Mono',monospace;color:var(--muted);font-weight:700}
+.prog-bar{height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;border:1px solid var(--border)}
+.prog-fill{height:100%;background:var(--accent-grad);border-radius:2px;transition:width .5s cubic-bezier(.22,1,.36,1)}
+.waveform{display:none;align-items:center;gap:2.5px;margin-left:4px}
+.waveform.show{display:flex}
+.wave-bar{width:2.5px;border-radius:2px;background:var(--green);animation:wave 1s ease-in-out infinite}
+.wave-bar:nth-child(1){height:7px}.wave-bar:nth-child(2){height:12px;animation-delay:.15s}.wave-bar:nth-child(3){height:9px;animation-delay:.3s}.wave-bar:nth-child(4){height:14px;animation-delay:.1s}.wave-bar:nth-child(5){height:7px;animation-delay:.25s}
+@keyframes wave{0%,100%{transform:scaleY(.5);opacity:.7}50%{transform:scaleY(1.2);opacity:1}}
 
-.welcome-time {
-  font-size: 12px; color: var(--muted); margin-top: 1.5rem;
-  font-family: 'JetBrains Mono', monospace; letter-spacing: .5px;
-  animation: lineIn .9s cubic-bezier(.22,1,.36,1) .9s both;
-  opacity: .65;
-}
+.content-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:1.5rem 1.75rem;min-height:110px;line-height:2.15;font-size:16px;font-weight:500;box-shadow:var(--shadow);transition:background .3s,border-color .3s}
+.sentence{cursor:pointer;border-radius:6px;padding:2px 5px;transition:all .15s;display:inline}
+.sentence:hover{background:var(--accent-light);color:var(--accent)}
+.sentence.active{background:var(--accent-light);color:var(--accent);font-weight:800;border-bottom:2.5px solid var(--highlight);padding:2px 6px;animation:sentIn .2s cubic-bezier(.22,1,.36,1)}
+@keyframes sentIn{from{background:rgba(255,107,74,.25)}to{background:var(--accent-light)}}
+.sentence.done{color:var(--done-text)}
 
-/* ── BLOBS ── */
-.bg-blob {
-  position: fixed; border-radius: 50%; filter: blur(80px);
-  opacity: .35; pointer-events: none; z-index: 0;
-  animation: blobFloat 8s ease-in-out infinite;
-  transition: background .3s;
-}
-.bg-blob-1 { width: 500px; height: 500px; background: var(--blob1); top: -100px; right: -100px; }
-.bg-blob-2 { width: 400px; height: 400px; background: var(--blob2); bottom: -80px; left: -80px; animation-delay: -3s; }
-.bg-blob-3 { width: 300px; height: 300px; background: var(--blob1); top: 40%; left: 30%; animation-delay: -5s; opacity: .18; }
-@keyframes blobFloat {
-  0%,100%{transform:translate(0,0) scale(1)}
-  33%{transform:translate(20px,-20px) scale(1.05)}
-  66%{transform:translate(-15px,15px) scale(.97)}
-}
+.trans-card{background:var(--green-bg);border:1.5px solid var(--green-border);border-radius:var(--r);padding:.9rem 1.25rem;display:none;transition:background .3s}
+.trans-card.show{display:block;animation:transIn .3s cubic-bezier(.22,1,.36,1)}
+@keyframes transIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.trans-header{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.trans-flag{font-size:14px}
+.trans-label{font-size:9.5px;font-weight:800;color:var(--green);letter-spacing:1px;text-transform:uppercase}
+.trans-text{font-size:14px;color:var(--green);line-height:1.75;font-weight:600;filter:brightness(.75)}
+[data-theme="dark"] .trans-text{filter:brightness(1.35)}
+.trans-loading{font-style:italic;opacity:.55;font-size:13px}
 
-/* ── SHELL ── */
-.shell { position: relative; z-index: 1; min-height: 100vh; display: grid; grid-template-columns: 270px 1fr; }
+.controls-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:.9rem 1.25rem;box-shadow:var(--shadow);display:flex;align-items:center;gap:6px;flex-wrap:wrap;transition:background .3s,border-color .3s}
+.ctrl-div{width:1px;height:24px;background:var(--border2);margin:0 2px;flex-shrink:0}
 
-/* ── SIDEBAR ── */
-.sidebar {
-  background: var(--sidebar-bg);
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  border-right: 1px solid var(--border2);
-  padding: 2rem 1.5rem;
-  display: flex; flex-direction: column; gap: 2rem;
-  position: sticky; top: 0; height: 100vh;
-  animation: slideInLeft .5s cubic-bezier(.22,1,.36,1);
-  transition: background .3s, border-color .3s;
-}
-@keyframes slideInLeft { from{opacity:0;transform:translateX(-24px)} to{opacity:1;transform:translateX(0)} }
+.settings-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:.8rem 1.25rem;box-shadow:var(--shadow);display:flex;align-items:center;gap:14px;flex-wrap:wrap;transition:background .3s,border-color .3s}
+.sg{display:flex;align-items:center;gap:7px}
+.sl{font-size:11px;color:var(--muted2);font-weight:700;white-space:nowrap}
+input[type=range]{width:72px;accent-color:var(--accent);cursor:pointer}
+.sv{font-size:10.5px;font-family:'Space Mono',monospace;color:var(--accent);min-width:28px;font-weight:700}
+select{font-size:12px;font-family:'Nunito',sans-serif;padding:5px 8px;border:1.5px solid var(--border2);border-radius:8px;background:var(--surface2);color:var(--text);cursor:pointer;max-width:140px;font-weight:600;transition:border-color .15s,background .3s}
+select:focus{outline:none;border-color:var(--accent)}
 
-.logo { display: flex; align-items: center; gap: 12px; }
-.logo-icon {
-  width: 42px; height: 42px; background: var(--accent-grad);
-  border-radius: 13px; display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 12px rgba(255,107,74,.35);
-  animation: logoPulse 3s ease-in-out infinite; font-size: 20px;
-}
-@keyframes logoPulse { 0%,100%{box-shadow:0 4px 12px rgba(255,107,74,.35)} 50%{box-shadow:0 6px 20px rgba(255,107,74,.55)} }
-.logo-text { font-size: 16px; font-weight: 700; color: var(--text); letter-spacing: -.3px; }
-.logo-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.tip-card{background:var(--accent-light);border:1.5px solid var(--border2);border-radius:var(--r-sm);padding:.75rem 1rem;font-size:12px;color:var(--muted2);line-height:1.65;display:flex;align-items:flex-start;gap:7px;font-weight:600}
+.tip-icon{font-size:14px;flex-shrink:0;animation:tipBounce 2s ease-in-out infinite}
+@keyframes tipBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.tip-card strong{color:var(--accent);font-weight:800}
 
-/* Sidebar top row: lang + dark toggle */
-.sidebar-controls { display: flex; align-items: center; justify-content: space-between; }
-.lang-toggle {
-  display: flex; gap: 2px;
-  background: var(--surface2); border: 1px solid var(--border2);
-  border-radius: 8px; padding: 2px; transition: background .3s;
-}
-.lang-btn {
-  font-size: 11px; font-weight: 700; padding: 4px 10px;
-  border-radius: 6px; border: none; background: transparent;
-  color: var(--muted); cursor: pointer; transition: all .15s;
-  font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: .3px;
-}
-.lang-btn.active { background: var(--accent-grad); color: #fff; }
-
-.theme-btn {
-  width: 34px; height: 34px; border-radius: 8px;
-  border: 1px solid var(--border2); background: var(--surface2);
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  font-size: 16px; transition: all .2s;
-}
-.theme-btn:hover { transform: rotate(20deg) scale(1.1); background: var(--accent-light); }
-
-.nav-section { display: flex; flex-direction: column; gap: 4px; }
-.nav-label { font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 8px; padding: 0 10px; }
-.nav-btn {
-  display: flex; align-items: center; gap: 10px; padding: 10px 14px;
-  border-radius: 8px; border: none; background: transparent;
-  color: var(--muted2); font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 13.5px; font-weight: 500; cursor: pointer;
-  transition: all .2s cubic-bezier(.22,1,.36,1); text-align: left; width: 100%;
-}
-.nav-btn svg { width: 17px; height: 17px; flex-shrink: 0; transition: transform .2s; }
-.nav-btn:hover { background: var(--accent-light); color: var(--accent); transform: translateX(3px); }
-.nav-btn:hover svg { transform: scale(1.15); }
-.nav-btn.active { background: var(--accent-grad); color: #fff; font-weight: 600; box-shadow: 0 4px 12px rgba(255,107,74,.3); }
-
-.sidebar-footer {
-  margin-top: auto; padding: 14px 16px;
-  background: var(--accent-light); border-radius: 12px; border: 1px solid var(--border2);
-  transition: background .3s;
-}
-.sf-title { font-size: 12px; font-weight: 700; color: var(--accent); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
-.sf-step { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--border); }
-.sf-step:last-child { border-bottom: none; }
-.sf-num { width: 20px; height: 20px; border-radius: 50%; background: var(--accent-grad); color: #fff; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.sf-text { font-size: 12px; color: var(--muted2); flex: 1; }
-.sf-tag { font-size: 10px; font-weight: 600; color: var(--accent); background: var(--surface); padding: 2px 7px; border-radius: 20px; }
-
-/* ── MAIN ── */
-.main { padding: 2.5rem; overflow-y: auto; }
-.view { display: none; }
-.view.show { display: block; animation: fadeUp .4s cubic-bezier(.22,1,.36,1); }
-@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-
-.page-header { margin-bottom: 2rem; }
-.page-title { font-size: 26px; font-weight: 700; letter-spacing: -.5px; margin-bottom: 4px; }
-.page-title span { background: var(--accent-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.page-desc { font-size: 13.5px; color: var(--muted); }
-
-/* ── CARDS ── */
-.card {
-  background: var(--card-bg); backdrop-filter: blur(12px);
-  border: 1px solid var(--border2); border-radius: 18px;
-  box-shadow: var(--shadow); transition: box-shadow .2s, background .3s, border-color .3s;
-}
-.card:hover { box-shadow: var(--shadow-md); }
-
-/* Input */
-.input-card-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-.input-card-title { font-size: 13px; font-weight: 600; color: var(--muted2); display: flex; align-items: center; gap: 6px; }
-.input-card-title svg { width: 14px; height: 14px; color: var(--accent); }
-.char-count { font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--muted); }
-textarea {
-  width: 100%; min-height: 240px; padding: 1.25rem 1.5rem;
-  border: none; outline: none; resize: vertical;
-  font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px;
-  color: var(--text); background: transparent; line-height: 1.85;
-  transition: color .3s;
-}
-textarea::placeholder { color: var(--done-text); font-style: italic; }
-.input-card-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 10px; background: var(--surface2); border-radius: 0 0 18px 18px; transition: background .3s; }
-
-/* ── BUTTONS ── */
-.btn {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 9px 18px; border-radius: 8px;
-  border: 1.5px solid var(--border2); background: var(--surface);
-  color: var(--muted2); font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 13px; font-weight: 600; cursor: pointer;
-  transition: all .2s cubic-bezier(.22,1,.36,1);
-  white-space: nowrap; box-shadow: var(--shadow);
-}
-.btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
-.btn:active { transform: scale(.96); }
-.btn svg { width: 14px; height: 14px; flex-shrink: 0; transition: transform .2s; }
-.btn:hover svg { transform: scale(1.1); }
-
-.btn-primary { background: var(--accent-grad); color: #fff; border-color: transparent; box-shadow: 0 4px 14px rgba(255,107,74,.4); padding: 10px 22px; font-size: 14px; }
-.btn-primary:hover { box-shadow: 0 6px 20px rgba(255,107,74,.5); }
-.btn-play { background: var(--text); color: var(--bg); border-color: var(--text); padding: 11px 28px; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,.2); transition: all .2s; }
-.btn-play:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,.3); }
-.btn-green { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
-.btn-green:hover { background: var(--green-bg); filter: brightness(.95); }
-.btn-ghost { background: transparent; border-color: var(--border); box-shadow: none; }
-.btn-ghost:hover { background: var(--accent-light); border-color: var(--border2); color: var(--accent); }
-
-/* ── READER ── */
-.reader-grid { display: flex; flex-direction: column; gap: 1rem; }
-
-.progress-card { padding: 1.25rem 1.5rem; }
-.prog-label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.prog-status { display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600; color: var(--text); }
-.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex-shrink: 0; transition: all .3s; }
-.dot.playing { background: var(--green); box-shadow: 0 0 0 4px rgba(0,200,150,.18); animation: dotPulse 1.2s infinite; }
-@keyframes dotPulse { 0%,100%{box-shadow:0 0 0 4px rgba(0,200,150,.18)} 50%{box-shadow:0 0 0 8px rgba(0,200,150,.06)} }
-.prog-counter { font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--muted); }
-.prog-bar { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; border: 1px solid var(--border); }
-.prog-fill { height: 100%; background: var(--accent-grad); border-radius: 3px; transition: width .5s cubic-bezier(.22,1,.36,1); position: relative; }
-.prog-fill::after { content:''; position:absolute; right:0; top:0; bottom:0; width:20px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.4)); animation:shimmer 1.5s infinite; }
-@keyframes shimmer { 0%{opacity:0} 50%{opacity:1} 100%{opacity:0} }
-
-.content-card { padding: 2rem; min-height: 160px; line-height: 2.15; font-size: 16px; letter-spacing: .01em; }
-.sentence { cursor: pointer; border-radius: 5px; padding: 2px 5px; transition: all .18s; display: inline; }
-.sentence:hover { background: var(--accent-light); color: var(--accent); }
-.sentence.active { background: var(--highlight-bg); color: var(--accent); font-weight: 600; border-bottom: 2.5px solid var(--highlight-border); animation: sentenceIn .25s cubic-bezier(.22,1,.36,1); }
-@keyframes sentenceIn { from{background:rgba(255,107,74,.3)} to{background:var(--highlight-bg)} }
-.sentence.done { color: var(--done-text); }
-
-.trans-card { background: var(--green-bg); border: 1.5px solid var(--green-border); border-radius: 18px; padding: 1.25rem 1.5rem; display: none; transition: background .3s, border-color .3s; }
-.trans-card.show { display: block; animation: transIn .3s cubic-bezier(.22,1,.36,1); }
-@keyframes transIn { from{opacity:0;transform:translateY(-10px) scale(.98)} to{opacity:1;transform:translateY(0) scale(1)} }
-.trans-header { display: flex; align-items: center; gap: 7px; margin-bottom: 8px; }
-.trans-flag { font-size: 16px; }
-.trans-label { font-size: 11px; font-weight: 700; color: var(--green); letter-spacing: 1px; text-transform: uppercase; }
-.trans-text { font-size: 15.5px; color: var(--green); line-height: 1.8; filter: brightness(.7); }
-[data-theme="dark"] .trans-text { filter: brightness(1.3); }
-.trans-loading { font-style: italic; font-size: 14px; opacity: .6; }
-
-.controls-card { padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.controls-divider { width: 1px; height: 30px; background: var(--border2); margin: 0 4px; }
-
-.settings-card { padding: 1.1rem 1.5rem; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
-.setting-group { display: flex; align-items: center; gap: 10px; }
-.setting-label { font-size: 12px; color: var(--muted2); font-weight: 600; white-space: nowrap; }
-input[type=range] { width: 88px; accent-color: var(--accent); cursor: pointer; }
-.setting-val { font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--accent); min-width: 34px; font-weight: 500; }
-select { font-size: 12.5px; font-family: 'Plus Jakarta Sans', sans-serif; padding: 6px 10px; border: 1.5px solid var(--border2); border-radius: 8px; background: var(--surface2); color: var(--text); cursor: pointer; max-width: 170px; transition: border-color .15s, background .3s, color .3s; }
-select:focus { outline: none; border-color: var(--accent); }
-
-.tip-card { background: var(--accent-light); border: 1.5px solid var(--border2); border-radius: 12px; padding: 1rem 1.25rem; font-size: 13px; color: var(--muted2); line-height: 1.7; display: flex; align-items: flex-start; gap: 10px; transition: background .3s; }
-.tip-icon { font-size: 18px; flex-shrink: 0; animation: tipBounce 2s ease-in-out infinite; }
-@keyframes tipBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
-.tip-card strong { color: var(--accent); font-weight: 600; }
-
-.waveform { display: none; align-items: center; gap: 3px; margin-left: 4px; }
-.waveform.show { display: flex; }
-.wave-bar { width: 3px; border-radius: 2px; background: var(--green); animation: wave 1s ease-in-out infinite; }
-.wave-bar:nth-child(1){height:8px;animation-delay:0s}
-.wave-bar:nth-child(2){height:14px;animation-delay:.15s}
-.wave-bar:nth-child(3){height:10px;animation-delay:.3s}
-.wave-bar:nth-child(4){height:16px;animation-delay:.1s}
-.wave-bar:nth-child(5){height:8px;animation-delay:.25s}
-@keyframes wave { 0%,100%{transform:scaleY(.5);opacity:.7} 50%{transform:scaleY(1.2);opacity:1} }
-
-@media (max-width: 768px) {
-  .shell { grid-template-columns: 1fr; }
-  .sidebar { display: none; }
-  .main { padding: 1.5rem; }
-}
+/* FX */
+.confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:200;overflow:hidden}
+.confetti-piece{position:absolute;border-radius:2px;animation:confettiFall linear forwards;opacity:0}
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--text);color:var(--bg);padding:10px 20px;border-radius:50px;font-size:13px;font-weight:700;box-shadow:0 6px 24px rgba(0,0,0,.2);z-index:150;transition:transform .4s cubic-bezier(.22,1,.36,1);display:flex;align-items:center;gap:8px;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
 
-<!-- WELCOME OVERLAY -->
-<div class="welcome-overlay" id="welcome-overlay">
-  <div class="welcome-orb welcome-orb-1"></div>
-  <div class="welcome-orb welcome-orb-2"></div>
-  <div class="welcome-orb welcome-orb-3"></div>
-  <div class="welcome-orb welcome-orb-4"></div>
-  <div class="welcome-grid"></div>
-  <div class="welcome-particles">
-    <div class="p"></div><div class="p"></div><div class="p"></div>
-    <div class="p"></div><div class="p"></div><div class="p"></div>
-    <div class="p"></div><div class="p"></div>
-  </div>
-  <div class="welcome-box">
-    <div class="welcome-greeting" id="welcome-greeting">Good afternoon <span class="welcome-emoji" id="welcome-emoji">👋</span></div>
-    <div class="welcome-sub" id="welcome-sub">Great to see you back</div>
-    <div class="welcome-sub2" id="welcome-sub2">Your English pronunciation session awaits 🎯</div>
-    <div class="welcome-stats">
-      <div class="welcome-stat">
-        <span class="welcome-stat-num" id="stat-time">03:36</span>
-        <span class="welcome-stat-label">Local Time</span>
-      </div>
-      <div class="welcome-stat-div"></div>
-      <div class="welcome-stat">
-        <span class="welcome-stat-num" id="stat-day">Wed</span>
-        <span class="welcome-stat-label">Today</span>
-      </div>
-      <div class="welcome-stat-div"></div>
-      <div class="welcome-stat">
-        <span class="welcome-stat-num">∞</span>
-        <span class="welcome-stat-label">Free to use</span>
-      </div>
+<div class="topbar"><div class="topbar-fill" id="topbar-fill"></div></div>
+
+<!-- WELCOME -->
+<div class="welcome" id="welcome">
+  <div class="w-orb w-orb-1"></div><div class="w-orb w-orb-2"></div>
+  <div class="w-grid"></div>
+  <div class="w-box">
+    <div class="w-greeting" id="w-greeting">Good afternoon <span class="w-emoji">🌤️</span></div>
+    <div class="w-sub" id="w-sub">Great to see you back</div>
+    <div class="w-sub2">Your pronunciation session awaits 🎯</div>
+    <div class="w-stats">
+      <div><span class="w-stat-num" id="w-time">--:--</span><span class="w-stat-label">Time</span></div>
+      <div class="w-div"></div>
+      <div><span class="w-stat-num" id="w-day">---</span><span class="w-stat-label">Today</span></div>
+      <div class="w-div"></div>
+      <div><span class="w-stat-num" id="w-trees">0🌱</span><span class="w-stat-label">Trees</span></div>
     </div>
-    <button class="welcome-btn" onclick="dismissWelcome()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+    <button class="w-btn" onclick="dismissWelcome()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
       Let's practice
     </button>
-    <div class="welcome-time" id="welcome-time"></div>
+    <div class="w-date" id="w-date"></div>
   </div>
 </div>
 
-<div class="bg-blob bg-blob-1"></div>
-<div class="bg-blob bg-blob-2"></div>
-<div class="bg-blob bg-blob-3"></div>
+<div class="confetti-wrap" id="confetti-wrap"></div>
+<div class="toast" id="toast"></div>
 
-<div class="shell">
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
+<div class="page">
+  <!-- HEADER -->
+  <div class="header">
     <div class="logo">
       <div class="logo-icon">🎙️</div>
-      <div>
-        <div class="logo-text">EN Reader</div>
-        <div class="logo-sub" id="sb-sub">Luyện phát âm tiếng Anh</div>
-      </div>
+      <div><div class="logo-text">EN Reader</div><div class="logo-sub">Pronunciation Trainer</div></div>
     </div>
-
-    <div class="sidebar-controls">
+    <div class="header-controls">
       <div class="lang-toggle">
         <button class="lang-btn active" id="lang-en" onclick="setLang('en')">EN</button>
         <button class="lang-btn" id="lang-vi" onclick="setLang('vi')">VI</button>
       </div>
-      <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle dark mode">🌙</button>
+      <button class="icon-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
+    </div>
+  </div>
+
+  <!-- ROW 1: TIMER + GROWING TREE -->
+  <div class="top-row">
+    <!-- TIMER -->
+    <div class="timer-card">
+      <div class="section-label">⏱️ Session Timer</div>
+      <div class="timer-inner">
+        <div class="timer-left">
+          <div class="session-opts">
+            <button class="session-opt active" data-mins="15" onclick="selectSession(15)">15m</button>
+            <button class="session-opt" data-mins="25" onclick="selectSession(25)">25m</button>
+            <button class="session-opt" data-mins="50" onclick="selectSession(50)">50m</button>
+            <button class="session-opt" data-mins="90" onclick="selectSession(90)">90m</button>
+          </div>
+          <div class="timer-display" id="timer-display">15:00</div>
+          <div class="timer-prog"><div class="timer-prog-fill" id="timer-prog-fill"></div></div>
+          <div class="timer-status" id="timer-status">Pick a duration and start</div>
+        </div>
+        <div class="timer-right">
+          <button class="btn btn-accent" id="timer-btn" onclick="toggleTimer()">▶ Start</button>
+          <button class="btn btn-ghost" onclick="resetTimer()">↺ Reset</button>
+        </div>
+      </div>
     </div>
 
-    <div class="nav-section">
-      <div class="nav-label" id="nav-label-ws">Workspace</div>
-      <button class="nav-btn active" id="nav-input" onclick="switchView('input')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        <span class="t" data-en="Input text" data-vi="Nhập text">Input text</span>
+    <!-- GROWING TREE -->
+    <div class="growing-card" id="growing-card">
+      <div class="section-label" style="align-self:flex-start">🌱 Growing Tree</div>
+      <div class="no-tree"><span class="no-tree-emoji">🪴</span>Start a session to plant<br>and grow your tree</div>
+    </div>
+  </div>
+
+  <!-- ROW 2: GARDEN -->
+  <div class="garden-card">
+    <div class="garden-top">
+      <div class="section-label" style="margin:0">🏡 My Garden</div>
+      <div class="garden-stats">
+        <div class="g-stat"><span id="g-trees">0</span> trees</div>
+        <div class="g-stat" style="margin-left:.5rem"><span id="g-sessions">0</span> sessions</div>
+        <div class="g-stat" style="margin-left:.5rem"><span id="g-streak">0</span>🔥</div>
+      </div>
+    </div>
+    <div class="garden-grid" id="garden-grid"></div>
+  </div>
+
+  <!-- ROW 3: INPUT -->
+  <div class="section-label">📝 Input text</div>
+  <div class="input-card">
+    <div class="input-header">
+      <span class="input-label">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        English text
+      </span>
+      <span class="char-count" id="char-count">0 chars</span>
+    </div>
+    <textarea id="txt-input" placeholder="Paste any English paragraph here..." oninput="updateCharCount()"></textarea>
+    <div class="input-footer">
+      <button class="btn btn-accent" onclick="startReading()">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Start reading
       </button>
-      <button class="nav-btn" id="nav-reader" onclick="switchView('reader')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        Reader
+      <button class="btn btn-ghost" onclick="clearInput()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+        Clear
       </button>
     </div>
+  </div>
 
-    <div class="sidebar-footer">
-      <div class="sf-title">🎯 <span class="t" data-en="Shadowing Method" data-vi="Phương pháp Shadowing">Shadowing Method</span></div>
-      <div class="sf-step">
-        <div class="sf-num">1</div>
-        <div class="sf-text t" data-en="Listen" data-vi="Nghe câu">Listen</div>
-        <div class="sf-tag">Play</div>
+  <!-- ROW 4: READER -->
+  <div class="reader-section" id="reader-section">
+    <div class="section-label">🎧 Reader</div>
+    <div class="prog-card">
+      <div class="prog-row">
+        <div class="prog-status">
+          <div class="dot" id="dot"></div>
+          <span id="status-txt">Ready</span>
+          <div class="waveform" id="waveform"><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div></div>
+        </div>
+        <span class="prog-counter" id="counter">0 / 0</span>
       </div>
-      <div class="sf-step">
-        <div class="sf-num">2</div>
-        <div class="sf-text t" data-en="Understand" data-vi="Hiểu nghĩa">Understand</div>
-        <div class="sf-tag t" data-en="Translate" data-vi="Dịch">Translate</div>
-      </div>
-      <div class="sf-step">
-        <div class="sf-num">3</div>
-        <div class="sf-text t" data-en="Shadow 3–5x" data-vi="Nhại theo 3–5x">Shadow 3–5x</div>
-        <div class="sf-tag">Repeat</div>
-      </div>
+      <div class="prog-bar"><div class="prog-fill" id="prog" style="width:0%"></div></div>
     </div>
-  </aside>
-
-  <!-- MAIN -->
-  <main class="main">
-
-    <!-- INPUT VIEW -->
-    <div class="view show" id="input-view">
-      <div class="page-header">
-        <div class="page-title"><span class="t" data-en="Input text" data-vi="Nhập văn bản">Input <span>text</span></span></div>
-        <div class="page-desc t" data-en="Paste any English paragraph to start practicing" data-vi="Paste bất kỳ đoạn tiếng Anh nào để bắt đầu luyện">Paste any English paragraph to start practicing</div>
-      </div>
-      <div class="card">
-        <div class="input-card-header">
-          <span class="input-card-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            English text
-          </span>
-          <span class="char-count" id="char-count">0 <span class="t" data-en="chars" data-vi="ký tự">chars</span></span>
-        </div>
-        <textarea id="txt-input"
-          placeholder="Paste any English paragraph here...&#10;&#10;Example: The Waiting Room feature helps distribute incoming traffic..."
-          oninput="updateCharCount()"></textarea>
-        <div class="input-card-footer">
-          <button class="btn btn-primary" onclick="startReading()">
-            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            <span class="t" data-en="Start reading" data-vi="Bắt đầu đọc">Start reading</span>
-          </button>
-          <button class="btn btn-ghost" onclick="clearInput()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
-            <span class="t" data-en="Clear" data-vi="Xóa">Clear</span>
-          </button>
-        </div>
-      </div>
+    <div class="content-card" id="content"></div>
+    <div class="trans-card" id="trans-box">
+      <div class="trans-header"><span class="trans-flag">🇻🇳</span><span class="trans-label">Translation</span></div>
+      <div class="trans-text" id="trans-text"></div>
     </div>
-
-    <!-- READER VIEW -->
-    <div class="view" id="reader-view">
-      <div class="page-header">
-        <div class="page-title"><span>Reader</span></div>
-        <div class="page-desc t" data-en="Listen, translate and shadow each sentence" data-vi="Nghe từng câu, dịch và nhại theo để luyện phát âm">Listen, translate and shadow each sentence</div>
-      </div>
-      <div class="reader-grid">
-
-        <div class="card progress-card">
-          <div class="prog-label-row">
-            <div class="prog-status">
-              <div class="dot" id="dot"></div>
-              <span id="status-txt" class="t" data-en="Ready" data-vi="Sẵn sàng">Ready</span>
-              <div class="waveform" id="waveform">
-                <div class="wave-bar"></div><div class="wave-bar"></div>
-                <div class="wave-bar"></div><div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-              </div>
-            </div>
-            <span class="prog-counter" id="counter">0 / 0</span>
-          </div>
-          <div class="prog-bar"><div class="prog-fill" id="prog" style="width:0%"></div></div>
-        </div>
-
-        <div class="card content-card" id="content"></div>
-
-        <div class="trans-card" id="trans-box">
-          <div class="trans-header">
-            <span class="trans-flag">🇻🇳</span>
-            <span class="trans-label t" data-en="Translation" data-vi="Bản dịch">Translation</span>
-          </div>
-          <div class="trans-text" id="trans-text"></div>
-        </div>
-
-        <div class="card controls-card">
-          <button class="btn" onclick="prevSentence()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-            <span class="t" data-en="Prev" data-vi="Trước">Prev</span>
-          </button>
-          <button class="btn btn-play" id="btn-play" onclick="togglePlay()">
-            <svg id="play-icon" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            <span id="play-label">Play</span>
-          </button>
-          <button class="btn" onclick="nextSentence()">
-            <span class="t" data-en="Next" data-vi="Tiếp">Next</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-          </button>
-          <div class="controls-divider"></div>
-          <button class="btn" onclick="repeatCurrent()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.45"/></svg>
-            <span class="t" data-en="Repeat" data-vi="Lặp lại">Repeat</span>
-          </button>
-          <button class="btn btn-green" onclick="translateCurrent()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h12M9 3v2m-4 4h8m-4 0v10m4-7h5l-5 5"/></svg>
-            <span class="t" data-en="Translate" data-vi="Dịch câu này">Translate</span>
-          </button>
-        </div>
-
-        <div class="card settings-card">
-          <div class="setting-group">
-            <span class="setting-label t" data-en="Speed" data-vi="Tốc độ">Speed</span>
-            <input type="range" min="0.5" max="1.5" step="0.1" value="0.85" id="rate-slider"
-              oninput="document.getElementById('rate-val').textContent=parseFloat(this.value).toFixed(1)+'x'">
-            <span class="setting-val" id="rate-val">0.9x</span>
-          </div>
-          <div class="setting-group">
-            <span class="setting-label">Pitch</span>
-            <input type="range" min="0.8" max="1.3" step="0.05" value="1.0" id="pitch-slider" style="width:70px">
-          </div>
-          <div class="setting-group">
-            <span class="setting-label t" data-en="Voice" data-vi="Giọng đọc">Voice</span>
-            <select id="voice-sel"><option>Loading...</option></select>
-          </div>
-        </div>
-
-        <div class="tip-card">
-          <span class="tip-icon">💡</span>
-          <span class="t"
-            data-en="<strong>Shadowing technique:</strong> Listen → understand meaning (Translate) → Repeat → read aloud simultaneously with audio. Repeat 3–5 times per sentence until natural."
-            data-vi="<strong>Shadowing technique:</strong> Nghe → hiểu nghĩa (Dịch) → bấm Lặp lại → đọc theo cùng lúc với audio. Lặp 3–5 lần mỗi câu cho đến khi cảm thấy tự nhiên.">
-            <strong>Shadowing technique:</strong> Listen → understand meaning → Repeat → read aloud simultaneously. 3–5 times per sentence.
-          </span>
-        </div>
-
-      </div>
+    <div class="controls-card">
+      <button class="btn" onclick="prevSentence()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><polyline points="15 18 9 12 15 6"/></svg>Prev</button>
+      <button class="btn btn-play" id="btn-play" onclick="togglePlay()">
+        <svg id="play-icon" viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        <span id="play-label">Play</span>
+      </button>
+      <button class="btn" onclick="nextSentence()">Next<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <div class="ctrl-div"></div>
+      <button class="btn" onclick="repeatCurrent()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.45"/></svg>Repeat</button>
+      <button class="btn btn-green" onclick="translateCurrent()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M3 5h12M9 3v2m-4 4h8m-4 0v10m4-7h5l-5 5"/></svg>Translate</button>
     </div>
-  </main>
+    <div class="settings-card">
+      <div class="sg"><span class="sl">Speed</span><input type="range" min="0.5" max="1.5" step="0.1" value="0.85" id="rate-slider" oninput="document.getElementById('rate-val').textContent=parseFloat(this.value).toFixed(1)+'x'"><span class="sv" id="rate-val">0.9x</span></div>
+      <div class="sg"><span class="sl">Pitch</span><input type="range" min="0.8" max="1.3" step="0.05" value="1.0" id="pitch-slider" style="width:60px"></div>
+      <div class="sg"><span class="sl">Voice</span><select id="voice-sel"><option>Loading...</option></select></div>
+    </div>
+    <div class="tip-card"><span class="tip-icon">💡</span><span><strong>Shadowing:</strong> Listen → Translate → Repeat 3-5x aloud simultaneously.</span></div>
+  </div>
 </div>
 
 <script>
+// ── THEME / LANG ──
+let isDark=localStorage.getItem('enreader-theme')==='dark';
+function applyTheme(){document.documentElement.setAttribute('data-theme',isDark?'dark':'light');document.getElementById('theme-btn').textContent=isDark?'☀️':'🌙';}
+function toggleTheme(){isDark=!isDark;localStorage.setItem('enreader-theme',isDark?'dark':'light');applyTheme();}
+let currentLang=localStorage.getItem('enreader-lang')||'en';
+function setLang(lang){currentLang=lang;localStorage.setItem('enreader-lang',lang);document.getElementById('lang-en').classList.toggle('active',lang==='en');document.getElementById('lang-vi').classList.toggle('active',lang==='vi');}
+
 // ── WELCOME ──
-const GREETINGS = {
-  en: { morning: { text: "Good morning!", emoji: "☀️", sub: "Welcome back" }, afternoon: { text: "Good afternoon!", emoji: "🌤️", sub: "Great to see you" }, evening: { text: "Good evening!", emoji: "🌙", sub: "Time to practice" } },
-  vi: { morning: { text: "Chào buổi sáng!", emoji: "☀️", sub: "Chào mừng bạn trở lại" }, afternoon: { text: "Chào buổi chiều!", emoji: "🌤️", sub: "Vui vì thấy bạn" }, evening: { text: "Chào buổi tối!", emoji: "🌙", sub: "Giờ luyện nói thôi" } }
-};
+function initWelcome(){
+  const h=new Date().getHours(),tod=h<12?'morning':h<18?'afternoon':'evening';
+  const map={morning:{text:"Good morning",emoji:"☀️",sub:"Rise and shine"},afternoon:{text:"Good afternoon",emoji:"🌤️",sub:"Great to see you back"},evening:{text:"Good evening",emoji:"🌙",sub:"Wind down with practice"}};
+  const g=map[tod];
+  document.getElementById('w-greeting').innerHTML=g.text+' <span class="w-emoji">'+g.emoji+'</span>';
+  document.getElementById('w-sub').textContent=g.sub;
+  const now=new Date();
+  document.getElementById('w-time').textContent=now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('w-day').textContent=now.toLocaleDateString('en-US',{weekday:'short'});
+  document.getElementById('w-trees').textContent=loadGarden().length+'🌱';
+  document.getElementById('w-date').textContent=now.toLocaleDateString('en-US',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+function dismissWelcome(){const el=document.getElementById('welcome');el.classList.add('hide');setTimeout(()=>el.style.display='none',400);}
 
-function getTimeOfDay() {
-  const h = new Date().getHours();
-  return h < 12 ? 'morning' : h < 18 ? 'afternoon' : 'evening';
+// ── GARDEN ──
+const LEVELS=[{emoji:'🌱',label:'Seed',pct:0},{emoji:'🌿',label:'Sprout',pct:20},{emoji:'🪴',label:'Sapling',pct:45},{emoji:'🌳',label:'Tree',pct:70},{emoji:'🌸',label:'Bloom',pct:100}];
+const TREE_TYPES=['🌳','🌲','🎋','🌵','🌴','🌺','🌻','🍀'];
+function loadGarden(){try{return JSON.parse(localStorage.getItem('enreader-garden')||'[]');}catch{return[];}}
+function saveGarden(g){localStorage.setItem('enreader-garden',JSON.stringify(g));}
+function getLevelByPct(pct){for(let i=LEVELS.length-1;i>=0;i--){if(pct>=LEVELS[i].pct)return i;}return 0;}
+function getLevelByTime(plantedAt){const h=(Date.now()-plantedAt)/3600000;const t=[0,6,24,72,168];for(let i=t.length-1;i>=0;i--){if(h>=t[i])return i;}return 0;}
+function getSessionPct(){if(timerTotal<=0||timerSecs===timerTotal)return 0;return Math.min(100,Math.round((timerTotal-timerSecs)/timerTotal*100));}
+
+let activeTreeIdx=-1;
+
+function updateGrowingCard(){
+  const card=document.getElementById('growing-card');
+  if(!card) return;
+  const pct=getSessionPct();
+  if(activeTreeIdx<0){
+    card.innerHTML='<div class="section-label" style="align-self:flex-start">🌱 Growing Tree</div><div class="no-tree"><span class="no-tree-emoji">🪴</span>Start a session to plant<br>and grow your tree</div>';
+    return;
+  }
+  const garden=loadGarden();
+  const tree=garden[activeTreeIdx];
+  if(!tree) return;
+  const lvl=getLevelByPct(pct);
+  const emoji=lvl>=2?(tree.type||'🌳'):LEVELS[lvl].emoji;
+  const nextLvl=Math.min(lvl+1,LEVELS.length-1);
+  const minsLeft=Math.ceil(timerSecs/60);
+  const nextInfo=lvl>=LEVELS.length-1?'🌸 Fully bloomed!':'Next: '+LEVELS[nextLvl].label+' at '+LEVELS[nextLvl].pct+'%';
+  card.innerHTML=`
+    <div class="section-label" style="align-self:flex-start">🌱 Growing Tree</div>
+    <div class="growing-emoji-wrap">${emoji}</div>
+    <div class="growing-name">${LEVELS[lvl].label}</div>
+    <div class="growing-sub">${timerRunning?minsLeft+'m left':'Paused at '+pct+'%'}</div>
+    <div class="growing-bar" style="width:100%"><div class="growing-bar-fill" style="width:${pct}%"></div></div>
+    <div class="growing-pct">${pct}% · ${nextInfo}</div>`;
 }
 
-function initWelcome() {
-  const tod = getTimeOfDay();
-  const greetMap = {
-    morning: { text: "Good morning", emoji: "☀️", sub: "Rise and shine — great time to practice", sub2: "Your English pronunciation session awaits 🎯" },
-    afternoon: { text: "Good afternoon", emoji: "🌤️", sub: "Great to see you back", sub2: "Keep the momentum going — great session ahead 🎯" },
-    evening: { text: "Good evening", emoji: "🌙", sub: "Wind down with some practice", sub2: "Evening sessions are great for retention 🎯" }
-  };
-  const g = greetMap[tod];
-  const emojiEl = document.getElementById('welcome-emoji');
-  const greetEl = document.getElementById('welcome-greeting');
-  const subEl = document.getElementById('welcome-sub');
-  const sub2El = document.getElementById('welcome-sub2');
-  if (emojiEl) emojiEl.textContent = g.emoji;
-  if (greetEl) greetEl.innerHTML = g.text + ' <span class="welcome-emoji" id="welcome-emoji">' + g.emoji + '</span>';
-  if (subEl) subEl.textContent = g.sub;
-  if (sub2El) sub2El.textContent = g.sub2;
-  const now = new Date();
-  const timeStr = now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'});
-  const dayStr = now.toLocaleDateString('en-US', {weekday:'short'});
-  const statTime = document.getElementById('stat-time');
-  const statDay = document.getElementById('stat-day');
-  if (statTime) statTime.textContent = timeStr;
-  if (statDay) statDay.textContent = dayStr;
-  const timeEl = document.getElementById('welcome-time');
-  if (timeEl) timeEl.textContent = now.toLocaleDateString('en-US', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+function renderGarden(){
+  const garden=loadGarden();
+  const sessions=parseInt(localStorage.getItem('enreader-sessions')||'0');
+  const streak=parseInt(localStorage.getItem('enreader-streak')||'0');
+  const gt=document.getElementById('g-trees');if(gt)gt.textContent=garden.length;
+  const gs=document.getElementById('g-sessions');if(gs)gs.textContent=sessions;
+  const gstr=document.getElementById('g-streak');if(gstr)gstr.textContent=streak;
+  const grid=document.getElementById('garden-grid');
+  if(!grid) return;
+  const slots=Math.max(8,garden.length+2);
+  grid.innerHTML='';
+  for(let i=0;i<Math.min(slots,16);i++){
+    const el=document.createElement('div');
+    if(i<garden.length){
+      const isActive=i===activeTreeIdx;
+      const pct=isActive?getSessionPct():100;
+      const lvl=isActive?getLevelByPct(pct):getLevelByTime(garden[i].plantedAt);
+      const emoji=lvl>=2?(garden[i].type||'🌳'):LEVELS[lvl].emoji;
+      el.className='g-tree'+(isActive?' active-now':lvl<4?' growing':'');
+      el.innerHTML='<span>'+emoji+'</span><span class="g-tree-lbl">'+(isActive?'now':LEVELS[lvl].label)+'</span>';
+    } else {
+      el.className='g-tree empty';el.textContent='+';
+    }
+    grid.appendChild(el);
+  }
 }
 
-function dismissWelcome() {
-  const el = document.getElementById('welcome-overlay');
-  el.classList.add('hide');
-  setTimeout(() => el.style.display = 'none', 500);
+function plantTree(){
+  const garden=loadGarden();
+  garden.push({plantedAt:Date.now(),type:TREE_TYPES[Math.floor(Math.random()*TREE_TYPES.length)]});
+  saveGarden(garden);
+  activeTreeIdx=garden.length-1;
+  const sessions=parseInt(localStorage.getItem('enreader-sessions')||'0')+1;
+  localStorage.setItem('enreader-sessions',sessions);
+  const lastSession=localStorage.getItem('enreader-last-session');
+  const today=new Date().toDateString(),yesterday=new Date(Date.now()-86400000).toDateString();
+  let streak=parseInt(localStorage.getItem('enreader-streak')||'0');
+  if(lastSession===yesterday)streak++;else if(lastSession!==today)streak=1;
+  localStorage.setItem('enreader-streak',streak);
+  localStorage.setItem('enreader-last-session',today);
+  renderGarden();updateGrowingCard();
+  showToast('🌱 Tree planted! Keep going!');
 }
 
-// ── LANGUAGE ──
-let currentLang = localStorage.getItem('enreader-lang') || 'en';
-
-function setLang(lang) {
-  currentLang = lang;
-  localStorage.setItem('enreader-lang', lang);
-  document.documentElement.setAttribute('data-lang', lang);
-  document.getElementById('lang-en').classList.toggle('active', lang === 'en');
-  document.getElementById('lang-vi').classList.toggle('active', lang === 'vi');
-  document.querySelectorAll('.t[data-' + lang + ']').forEach(el => {
-    el.innerHTML = el.getAttribute('data-' + lang);
-  });
+// ── TIMER ──
+let timerInterval=null,timerSecs=0,timerTotal=0,timerRunning=false,selectedMins=15;
+function selectSession(mins){
+  selectedMins=mins;
+  document.querySelectorAll('.session-opt').forEach(b=>b.classList.toggle('active',parseInt(b.dataset.mins)===mins));
+  if(!timerRunning){timerSecs=mins*60;timerTotal=timerSecs;updateTimerDisplay();}
 }
-
-// ── DARK MODE ──
-let isDark = localStorage.getItem('enreader-theme') === 'dark';
-
-function applyTheme() {
-  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-  document.getElementById('theme-btn').textContent = isDark ? '☀️' : '🌙';
+function updateTimerDisplay(){
+  const m=Math.floor(timerSecs/60).toString().padStart(2,'0'),s=(timerSecs%60).toString().padStart(2,'0');
+  const pct=timerTotal>0?(timerTotal-timerSecs)/timerTotal*100:0;
+  const td=document.getElementById('timer-display');if(td)td.textContent=m+':'+s;
+  const tf=document.getElementById('timer-prog-fill');if(tf)tf.style.width=pct+'%';
+  document.getElementById('topbar-fill').style.width=pct+'%';
 }
-
-function toggleTheme() {
-  isDark = !isDark;
-  localStorage.setItem('enreader-theme', isDark ? 'dark' : 'light');
-  applyTheme();
+function setTimerStatus(msg){const el=document.getElementById('timer-status');if(el)el.textContent=msg;}
+function setTimerBtn(lbl){const el=document.getElementById('timer-btn');if(el)el.textContent=lbl;}
+function toggleTimer(){timerRunning?pauseTimer():startTimer();}
+function startTimer(){
+  if(timerRunning)return;
+  if(timerSecs<=0){timerSecs=selectedMins*60;timerTotal=timerSecs;}
+  timerRunning=true;setTimerBtn('⏸ Pause');setTimerStatus('In progress — keep reading!');
+  if(activeTreeIdx<0)plantTree();
+  timerInterval=setInterval(()=>{timerSecs--;updateTimerDisplay();updateGrowingCard();renderGarden();if(timerSecs<=0){clearInterval(timerInterval);timerRunning=false;timerComplete();}},1000);
+}
+function pauseTimer(){clearInterval(timerInterval);timerRunning=false;setTimerBtn('▶ Resume');setTimerStatus('Paused');}
+function resetTimer(){
+  clearInterval(timerInterval);timerRunning=false;
+  timerSecs=selectedMins*60;timerTotal=timerSecs;updateTimerDisplay();
+  document.getElementById('topbar-fill').style.width='0%';
+  setTimerBtn('▶ Start');setTimerStatus('Pick a duration and start');
+  const td=document.getElementById('timer-display');if(td)td.classList.remove('done');
+  activeTreeIdx=-1;renderGarden();updateGrowingCard();
+}
+function timerComplete(){
+  const td=document.getElementById('timer-display');if(td){td.textContent='00:00';td.classList.add('done');}
+  setTimerBtn('▶ Start');setTimerStatus('Session complete! 🎉');
+  activeTreeIdx=-1;renderGarden();updateGrowingCard();
+  showConfetti();showToast('🎉 Session complete! Tree is growing.');
+  setTimeout(()=>{const td=document.getElementById('timer-display');if(td)td.classList.remove('done');},3000);
 }
 
 // ── READER ──
-let sentences = [], curIdx = -1, playing = false, voices = [], utter = null;
-
-function splitSentences(text) {
-  const cleaned = text.replace(/\n+/g, ' ').replace(/\s+/g, ' ').trim();
-  return cleaned.match(/[^.!?]+[.!?]+/g)?.map(s => s.trim()).filter(s => s.length > 4) || [cleaned];
+let sentences=[],curIdx=-1,playing=false,voices=[],utter=null;
+function splitSentences(t){const c=t.replace(/\n+/g,' ').replace(/\s+/g,' ').trim();return c.match(/[^.!?]+[.!?]+/g)?.map(s=>s.trim()).filter(s=>s.length>4)||[c];}
+function updateCharCount(){document.getElementById('char-count').textContent=document.getElementById('txt-input').value.length+' chars';}
+function clearInput(){document.getElementById('txt-input').value='';updateCharCount();const rs=document.getElementById('reader-section');rs.classList.remove('show');}
+function startReading(){
+  const txt=document.getElementById('txt-input').value.trim();
+  if(!txt){alert('Please paste some text first!');return;}
+  sentences=splitSentences(txt);curIdx=-1;playing=false;
+  updatePlayBtn();renderContent();updateProgress();hideTranslation();setStatus('Ready',false);
+  const rs=document.getElementById('reader-section');rs.classList.add('show');
+  setTimeout(()=>rs.scrollIntoView({behavior:'smooth',block:'start'}),100);
 }
-
-function updateCharCount() {
-  const v = document.getElementById('txt-input').value.length;
-  const u = currentLang === 'vi' ? 'ký tự' : 'chars';
-  document.getElementById('char-count').textContent = v + ' ' + u;
-}
-
-function clearInput() {
-  document.getElementById('txt-input').value = '';
-  updateCharCount();
-}
-
-function switchView(v) {
-  document.getElementById('input-view').classList.toggle('show', v === 'input');
-  document.getElementById('reader-view').classList.toggle('show', v === 'reader');
-  document.getElementById('nav-input').classList.toggle('active', v === 'input');
-  document.getElementById('nav-reader').classList.toggle('active', v === 'reader');
-  if (v === 'reader') hideTranslation();
-}
-
-function startReading() {
-  const txt = document.getElementById('txt-input').value.trim();
-  if (!txt) { alert(currentLang === 'vi' ? 'Bạn chưa nhập text!' : 'Please paste some text first!'); return; }
-  sentences = splitSentences(txt);
-  curIdx = -1; playing = false;
-  updatePlayBtn(); renderContent(); updateProgress();
-  hideTranslation(); setStatus(currentLang === 'vi' ? 'Sẵn sàng' : 'Ready', false);
-  switchView('reader');
-}
-
-function renderContent() {
-  document.getElementById('content').innerHTML = sentences.map((s, i) =>
-    `<span class="sentence${i < curIdx ? ' done' : i === curIdx ? ' active' : ''}" onclick="jumpTo(${i})">${s}</span> `
-  ).join('');
-}
-
-function jumpTo(i) {
-  stopSpeech(); playing = true;
-  curIdx = i; renderContent(); updateProgress(); updatePlayBtn();
-  hideTranslation(); speakCurrent();
-}
-
-function updateProgress() {
-  const pct = sentences.length ? Math.round((Math.max(curIdx, 0) + 1) / sentences.length * 100) : 0;
-  document.getElementById('prog').style.width = (curIdx < 0 ? 0 : pct) + '%';
-  document.getElementById('counter').textContent = curIdx >= 0 ? `${curIdx + 1} / ${sentences.length}` : `0 / ${sentences.length}`;
-}
-
-function speakCurrent() {
-  if (curIdx < 0 || curIdx >= sentences.length) return;
+function renderContent(){document.getElementById('content').innerHTML=sentences.map((s,i)=>`<span class="sentence${i<curIdx?' done':i===curIdx?' active':''}" onclick="jumpTo(${i})">${s}</span> `).join('');}
+function jumpTo(i){stopSpeech();playing=true;curIdx=i;renderContent();updateProgress();updatePlayBtn();hideTranslation();speakCurrent();}
+function updateProgress(){const pct=sentences.length?Math.round((Math.max(curIdx,0)+1)/sentences.length*100):0;document.getElementById('prog').style.width=(curIdx<0?0:pct)+'%';document.getElementById('counter').textContent=curIdx>=0?`${curIdx+1} / ${sentences.length}`:`0 / ${sentences.length}`;}
+function speakCurrent(){
+  if(curIdx<0||curIdx>=sentences.length)return;
   stopSpeech();
-  utter = new SpeechSynthesisUtterance(sentences[curIdx]);
-  utter.rate = parseFloat(document.getElementById('rate-slider').value);
-  utter.pitch = parseFloat(document.getElementById('pitch-slider').value);
-  const sel = document.getElementById('voice-sel');
-  if (sel.value && voices.length) { const v = voices.find(v => v.name === sel.value); if (v) utter.voice = v; }
-  utter.onend = () => {
-    if (!playing) return;
-    if (curIdx < sentences.length - 1) { curIdx++; renderContent(); updateProgress(); scrollActive(); setTimeout(speakCurrent, 380); }
-    else { playing = false; updatePlayBtn(); setStatus(currentLang === 'vi' ? 'Hoàn thành ✓' : 'Done ✓', false); }
-  };
-  utter.onerror = () => {};
-  speechSynthesis.speak(utter);
-  scrollActive();
-  setStatus(`${currentLang === 'vi' ? 'Câu' : 'Sentence'} ${curIdx + 1} / ${sentences.length}`, true);
+  utter=new SpeechSynthesisUtterance(sentences[curIdx]);
+  utter.rate=parseFloat(document.getElementById('rate-slider').value);
+  utter.pitch=parseFloat(document.getElementById('pitch-slider').value);
+  const sel=document.getElementById('voice-sel');
+  if(sel.value&&voices.length){const v=voices.find(v=>v.name===sel.value);if(v)utter.voice=v;}
+  utter.onend=()=>{if(!playing)return;if(curIdx<sentences.length-1){curIdx++;renderContent();updateProgress();scrollActive();setTimeout(speakCurrent,380);}else{playing=false;updatePlayBtn();setStatus('Done ✓',false);}};
+  utter.onerror=()=>{};
+  speechSynthesis.speak(utter);scrollActive();
+  setStatus(`Sentence ${curIdx+1} / ${sentences.length}`,true);
 }
-
-function scrollActive() { const el = document.querySelector('.sentence.active'); if (el) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
-function stopSpeech() { speechSynthesis.cancel(); utter = null; }
-
-function togglePlay() {
-  if (playing) { playing = false; stopSpeech(); updatePlayBtn(); setStatus(currentLang === 'vi' ? 'Đã tạm dừng' : 'Paused', false); }
-  else { playing = true; if (curIdx < 0) curIdx = 0; renderContent(); updateProgress(); updatePlayBtn(); speakCurrent(); }
+function scrollActive(){const el=document.querySelector('.sentence.active');if(el)el.scrollIntoView({block:'nearest',behavior:'smooth'});}
+function stopSpeech(){speechSynthesis.cancel();utter=null;}
+function togglePlay(){if(playing){playing=false;stopSpeech();updatePlayBtn();setStatus('Paused',false);}else{playing=true;if(curIdx<0)curIdx=0;renderContent();updateProgress();updatePlayBtn();speakCurrent();}}
+function nextSentence(){stopSpeech();playing=false;updatePlayBtn();hideTranslation();if(curIdx<sentences.length-1){curIdx++;renderContent();updateProgress();}setStatus('Ready',false);}
+function prevSentence(){stopSpeech();playing=false;updatePlayBtn();hideTranslation();if(curIdx>0){curIdx--;renderContent();updateProgress();}setStatus('Ready',false);}
+function repeatCurrent(){if(curIdx<0)curIdx=0;stopSpeech();playing=true;updatePlayBtn();speakCurrent();}
+function updatePlayBtn(){const isPlay=!playing;document.getElementById('play-icon').innerHTML=isPlay?'<polygon points="5 3 19 12 5 21 5 3"/>':'<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';document.getElementById('play-label').textContent=isPlay?'Play':'Pause';document.getElementById('dot').classList.toggle('playing',playing);document.getElementById('waveform').classList.toggle('show',playing);}
+function setStatus(msg,isPlaying){document.getElementById('status-txt').textContent=msg;document.getElementById('dot').classList.toggle('playing',isPlaying);document.getElementById('waveform').classList.toggle('show',isPlaying);}
+function hideTranslation(){document.getElementById('trans-box').classList.remove('show');document.getElementById('trans-text').textContent='';}
+async function translateCurrent(){
+  if(curIdx<0||curIdx>=sentences.length){setStatus('Select a sentence first',false);return;}
+  const box=document.getElementById('trans-box'),txt=document.getElementById('trans-text');
+  box.classList.add('show');txt.innerHTML='<span class="trans-loading">Translating...</span>';
+  try{const res=await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=vi&dt=t&q='+encodeURIComponent(sentences[curIdx]));const data=await res.json();txt.textContent=data?.[0]?.map(x=>x?.[0]).filter(Boolean).join('')||'Could not translate.';}
+  catch{txt.textContent='Connection error.';}
 }
+function loadVoices(){voices=speechSynthesis.getVoices().filter(v=>v.lang.startsWith('en'));const sel=document.getElementById('voice-sel');if(voices.length){sel.innerHTML=voices.map(v=>`<option value="${v.name}">${v.name.replace(/Microsoft |Google /,'')}</option>`).join('');const p=voices.find(v=>v.name.includes('Samantha')||v.name.includes('Karen')||v.name.includes('Daniel')||v.name.includes('Zira'));if(p)sel.value=p.name;}else sel.innerHTML='<option value="">Default</option>';}
 
-function nextSentence() { stopSpeech(); playing = false; updatePlayBtn(); hideTranslation(); if (curIdx < sentences.length - 1) { curIdx++; renderContent(); updateProgress(); } setStatus(currentLang === 'vi' ? 'Sẵn sàng' : 'Ready', false); }
-function prevSentence() { stopSpeech(); playing = false; updatePlayBtn(); hideTranslation(); if (curIdx > 0) { curIdx--; renderContent(); updateProgress(); } setStatus(currentLang === 'vi' ? 'Sẵn sàng' : 'Ready', false); }
-function repeatCurrent() { if (curIdx < 0) curIdx = 0; stopSpeech(); playing = true; updatePlayBtn(); speakCurrent(); }
-
-function updatePlayBtn() {
-  const isPlay = !playing;
-  document.getElementById('play-icon').innerHTML = isPlay ? '<polygon points="5 3 19 12 5 21 5 3"/>' : '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
-  document.getElementById('play-label').textContent = isPlay ? 'Play' : 'Pause';
-  document.getElementById('dot').classList.toggle('playing', playing);
-  document.getElementById('waveform').classList.toggle('show', playing);
-}
-
-function setStatus(msg, isPlaying) {
-  document.getElementById('status-txt').textContent = msg;
-  document.getElementById('dot').classList.toggle('playing', isPlaying);
-  document.getElementById('waveform').classList.toggle('show', isPlaying);
-}
-
-function hideTranslation() { document.getElementById('trans-box').classList.remove('show'); document.getElementById('trans-text').textContent = ''; }
-
-async function translateCurrent() {
-  if (curIdx < 0 || curIdx >= sentences.length) { setStatus(currentLang === 'vi' ? 'Chọn một câu trước' : 'Select a sentence first', false); return; }
-  const box = document.getElementById('trans-box');
-  const txt = document.getElementById('trans-text');
-  box.classList.add('show');
-  txt.innerHTML = `<span class="trans-loading">${currentLang === 'vi' ? 'Đang dịch...' : 'Translating...'}</span>`;
-  try {
-    const url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=vi&dt=t&q=' + encodeURIComponent(sentences[curIdx]);
-    const res = await fetch(url);
-    const data = await res.json();
-    txt.textContent = data?.[0]?.map(x => x?.[0]).filter(Boolean).join('') || (currentLang === 'vi' ? 'Không dịch được.' : 'Could not translate.');
-  } catch (e) { txt.textContent = currentLang === 'vi' ? 'Lỗi kết nối.' : 'Connection error.'; }
-}
-
-function loadVoices() {
-  voices = speechSynthesis.getVoices().filter(v => v.lang.startsWith('en'));
-  const sel = document.getElementById('voice-sel');
-  if (voices.length) {
-    sel.innerHTML = voices.map(v => `<option value="${v.name}">${v.name.replace(/Microsoft |Google /, '')}</option>`).join('');
-    const preferred = voices.find(v => v.name.includes('Samantha') || v.name.includes('Karen') || v.name.includes('Daniel') || v.name.includes('Zira') || v.name.includes('Moira'));
-    if (preferred) sel.value = preferred.name;
-  } else { sel.innerHTML = '<option value="">Default voice</option>'; }
-}
+// ── FX ──
+function showConfetti(){const wrap=document.getElementById('confetti-wrap');const colors=['#FF6B4A','#FFB080','#FF9A6C','#00C896','#FFD700','#FF69B4'];for(let i=0;i<55;i++){const p=document.createElement('div');p.className='confetti-piece';p.style.cssText=`left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};width:${4+Math.random()*7}px;height:${4+Math.random()*7}px;border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.4}s;`;wrap.appendChild(p);setTimeout(()=>p.remove(),3500);}}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);}
 
 // ── INIT ──
-applyTheme();
-setLang(currentLang);
-initWelcome();
-speechSynthesis.onvoiceschanged = loadVoices;
-loadVoices();
+document.addEventListener('DOMContentLoaded',()=>{
+  applyTheme();initWelcome();selectSession(15);renderGarden();updateGrowingCard();
+  speechSynthesis.onvoiceschanged=loadVoices;loadVoices();
+});
 </script>
 </body>
 </html>
